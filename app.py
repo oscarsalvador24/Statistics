@@ -12,12 +12,12 @@ st.set_page_config(layout="wide", page_title="Sistema Estadistico")
 
 @st.cache_data
 def cargar_datos(archivo):
-return pd.read_excel(archivo).dropna()
+    return pd.read_excel(archivo).dropna()
 
 def calcular_ic_95(data):
-mean = np.mean(data)
-sem = stats.sem(data)
-ic = stats.t.interval(0.95, len(data)-1, loc=mean, scale=sem)
+    mean = np.mean(data)
+    sem = stats.sem(data)
+    ic = stats.t.interval(0.95, len(data)-1, loc=mean, scale=sem)
 return mean, ic
 
 st.title("Plataforma de Analisis e Inferencia en la Nube")
@@ -27,19 +27,19 @@ st.warning("Recordatorio de Privacidad y Seguridad Legal: Asegurese de que el ar
 archivo_subido = st.file_uploader("Carga de datos en formato Excel", type=["xlsx", "xls"])
 
 if archivo_subido:
-df = cargar_datos(archivo_subido)
+    df = cargar_datos(archivo_subido)
 
-palabras_clave_privadas = ["nombre", "apellido", "direccion", "postal", "correo", "email", "telefono", "tlf", "movil", "dni", "nif", "nie", "pasaporte", "historia", "hc", "nhc", "identificacion", "paciente"]
+    palabras_clave_privadas = ["nombre", "apellido", "direccion", "postal", "correo", "email", "telefono", "tlf", "movil", "dni", "nif", "nie", "pasaporte", "historia", "hc", "nhc", "identificacion", "paciente"]
 
-columnas_detectadas = [col for col in df.columns if any(palabra in str(col).lower() for palabra in palabras_clave_privadas)]
+    columnas_detectadas = [col for col in df.columns if any(palabra in str(col).lower() for palabra in palabras_clave_privadas)]
 
 if len(columnas_detectadas) > 0:
     st.warning("Notificacion: Se han detectado columnas con posible informacion privada (" + ", ".join(columnas_detectadas) + "). Se recomienda precaucion con el manejo de estos datos.")
 
-cols_num = df.select_dtypes(include=np.number).columns.tolist()
-cols_cat = df.select_dtypes(exclude=np.number).columns.tolist()
+    cols_num = df.select_dtypes(include=np.number).columns.tolist()
+    cols_cat = df.select_dtypes(exclude=np.number).columns.tolist()
 
-tab_desc, tab_inf, tab_mod = st.tabs(["Descriptiva", "Inferencia", "Modelos"])
+    tab_desc, tab_inf, tab_mod = st.tabs(["Descriptiva", "Inferencia", "Modelos"])
 
 with tab_desc:
     c1, c2, c3 = st.columns([1, 1, 2])
@@ -53,7 +53,7 @@ with tab_desc:
         buffer = io.BytesIO()
         with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
             stats_df.to_excel(writer, sheet_name='Descriptiva')
-        st.download_button("Descargar en Excel", data=buffer.getvalue(), file_name="estadistica_descriptiva.xlsx")
+            st.download_button("Descargar en Excel", data=buffer.getvalue(), file_name="estadistica_descriptiva.xlsx")
     with c3:
         fig_desc = px.box(df, y=var_estudio, x=var_agrupar, points="all")
         st.plotly_chart(fig_desc, use_container_width=True)
@@ -75,7 +75,7 @@ with tab_inf:
                 if p_shap <= 0.05: 
                     normalidad_cumplida = False
         
-        n_grupos = len(grupos)
+            n_grupos = len(grupos)
         if n_grupos == 2:
             if normalidad_cumplida:
                 test_sugerido = "t-Student" if not es_apareada else "t-Student Apareada"
